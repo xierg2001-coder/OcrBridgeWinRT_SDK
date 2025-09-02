@@ -1,4 +1,3 @@
-
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -13,9 +12,10 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::Storage::Streams;
-using namespace Microsoft::Windows::AI::Imaging;
+using namespace Microsoft::Windows::AI.Imaging;
 using namespace Windows::Data::Json;
 
+// The rest of your code for ProcessImageAsync is correct and remains the same.
 IAsyncOperation<JsonObject> ProcessImageAsync(std::wstring const& filePath, int index)
 {
     std::ifstream file(filePath, std::ios::binary);
@@ -55,25 +55,39 @@ IAsyncOperation<JsonObject> ProcessImageAsync(std::wstring const& filePath, int 
     co_return pageObj;
 }
 
-int main(int argc, char* argv[])
+// Main function changed to a WinRT coroutine
+winrt::fire_and_forget run(int argc, char* argv[])
 {
-    init_apartment();
-    std::vector<std::future<JsonObject>> futures;
+    std::vector<IAsyncOperation<JsonObject>> tasks;
 
+    // Collect all the asynchronous tasks
     for (int i = 1; i < argc; ++i)
     {
-        std::wstring filePath = std::wstring(argv[i], argv[i] + strlen(argv[i]));
-        futures.push_back(std::async(std::launch::async, [filePath, i]() {
-            return ProcessImageAsync(filePath, i).get();
-        }));
+        // Convert from char* to std::wstring
+        std::string s(argv[i]);
+        std::wstring ws(s.begin(), s.end());
+        tasks.push_back(ProcessImageAsync(ws, i));
     }
 
+    // Await all tasks concurrently
+    auto results = co_await winrt::when_all(tasks);
+
     JsonArray allResults;
-    for (auto& f : futures)
+    for (auto& result : results)
     {
-        allResults.Append(f.get());
+        allResults.Append(result.GetResults());
     }
 
     std::wcout << allResults.Stringify().c_str() << std::endl;
+}
+
+int main(int argc, char* argv[])
+{
+    // A single-threaded apartment (STA) is necessary for many WinRT APIs
+    init_apartment();
+    
+    // Call the coroutine function
+    run(argc, argv);
+    
     return 0;
 }

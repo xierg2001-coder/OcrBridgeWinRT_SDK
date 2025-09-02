@@ -17,8 +17,6 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
 
-    - name: Setup VSTools
-      uses: microsoft/setup-vs-tools@v1.1
 
     # Optional: If you need a specific Visual Studio version
     - name: Get Visual Studio
@@ -31,7 +29,7 @@ jobs:
 
     # Optional: Upload the build artifacts
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: my-app
         path: path/to/your/build/output

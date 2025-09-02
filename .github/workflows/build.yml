@@ -33,13 +33,6 @@ jobs:
       run: |
         choco install visualstudio2019-workload-vuwp --includeRecommended --passive
 
-        - name: Configure CMake
-         run: |
-          mkdir build
-          cmake -S . -B build \
-          -DCMAKE_TOOLCHAIN_FILE="path_to_vc_toolchain" \
-          -DCMAKE_INCLUDE_PATH="C:/Program Files (x86)/Windows Kits/10/Include/<SDK_version>" \
-          -DCMAKE_LIBRARY_PATH="C:/Program Files (x86)/Windows Kits/10/Lib/<SDK_version>"
         
     - name: Locate Windows SDK
       run: |

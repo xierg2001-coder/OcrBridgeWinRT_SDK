@@ -25,7 +25,7 @@ jobs:
     # Build the project using MSBuild
     - name: Build Project
       run: |
-        msbuild your_project_name.sln /p:Configuration=Release /p:Platform=x64
+        msbuild OcrBridgeWinRT_SDK.sln /p:Configuration=Release /p:Platform=x64
 
     # Optional: Upload the build artifacts
     - name: Upload Artifact

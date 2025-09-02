@@ -29,11 +29,7 @@ jobs:
         mkdir sdk
         tar -xf packages/Microsoft.WindowsAppSDK.1.7.250606001/Microsoft.WindowsAppSDK.1.7.250606001.nupkg -C sdk
 
-    - name: Install UWP SDK components
-      run: |
-        choco install visualstudio2019-workload-vuwp --includeRecommended --passive
 
-        
     - name: Locate Windows SDK
       run: |
        vswhere -latest -products * -requires Microsoft.VisualStudio.Component.Windows10SDK* -property installationPath

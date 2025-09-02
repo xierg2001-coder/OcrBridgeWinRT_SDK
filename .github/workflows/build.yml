@@ -16,7 +16,9 @@ jobs:
 
     - name: Setup MSVC environment
       uses: ilammy/msvc-dev-cmd@v1
+      
 
+    
     - name: Download Windows App SDK NuGet package
       run: |
         mkdir packages
@@ -27,6 +29,21 @@ jobs:
         mkdir sdk
         tar -xf packages/Microsoft.WindowsAppSDK.1.7.250606001/Microsoft.WindowsAppSDK.1.7.250606001.nupkg -C sdk
 
+    - name: Install UWP SDK components
+      run: |
+        choco install visualstudio2019-workload-vuwp --includeRecommended --passive
+
+        - name: Configure CMake
+         run: |
+          mkdir build
+          cmake -S . -B build \
+          -DCMAKE_TOOLCHAIN_FILE="path_to_vc_toolchain" \
+          -DCMAKE_INCLUDE_PATH="C:/Program Files (x86)/Windows Kits/10/Include/<SDK_version>" \
+          -DCMAKE_LIBRARY_PATH="C:/Program Files (x86)/Windows Kits/10/Lib/<SDK_version>"
+        
+    - name: Locate Windows SDK
+      run: |
+       vswhere -latest -products * -requires Microsoft.VisualStudio.Component.Windows10SDK* -property installationPath
     - name: Configure CMake
       run: cmake -S . -B build -DCMAKE_PREFIX_PATH="${{ github.workspace }}\\sdk"
 

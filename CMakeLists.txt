@@ -10,5 +10,11 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 add_executable(OcrBridgeWinRT src/main.cpp)
 
 # Link WindowsAppSDK
-find_package(Microsoft.WindowsAppSDK REQUIRED)
+
+include_directories("${CMAKE_PREFIX_PATH}/include")
+link_directories("${CMAKE_PREFIX_PATH}/lib")
+
+add_executable(OcrBridgeWinRT src/main.cpp)
+target_link_libraries(OcrBridgeWinRT WindowsApp)
+
 target_link_libraries(OcrBridgeWinRT Microsoft.WindowsAppSDK::WindowsApp)

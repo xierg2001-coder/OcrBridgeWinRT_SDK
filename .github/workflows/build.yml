@@ -17,14 +17,18 @@ jobs:
     - name: Setup MSVC environment
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install NuGet
-      uses: nuget/setup-nuget@v1
+    - name: Download Windows App SDK NuGet package
+      run: |
+        mkdir packages
+        nuget install Microsoft.WindowsAppSDK -Version 1.7.250606001 -OutputDirectory packages
 
-    - name: Restore NuGet packages
-      run: nuget install Microsoft.WindowsAppSDK -Version 1.7.250606001 -OutputDirectory packages
+    - name: Extract SDK
+      run: |
+        mkdir sdk
+        tar -xf packages/Microsoft.WindowsAppSDK.1.7.250606001/Microsoft.WindowsAppSDK.1.7.250606001.nupkg -C sdk
 
     - name: Configure CMake
-      run: cmake -S . -B build -DCMAKE_PREFIX_PATH="packages\\Microsoft.WindowsAppSDK.1.7.250606001\\build\\native"
+      run: cmake -S . -B build -DCMAKE_PREFIX_PATH="${{ github.workspace }}\\sdk"
 
     - name: Build project
       run: cmake --build build --config Release

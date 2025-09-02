@@ -16,5 +16,3 @@ link_directories("${CMAKE_PREFIX_PATH}/lib")
 
 add_executable(OcrBridgeWinRT src/main.cpp)
 target_link_libraries(OcrBridgeWinRT WindowsApp)
-
-target_link_libraries(OcrBridgeWinRT Microsoft.WindowsAppSDK::WindowsApp)

@@ -1,4 +1,3 @@
-
 name: Build OCR Bridge
 
 on:
@@ -12,14 +11,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-        choco install windows-sdk-10.1 --version=10.1.1.7
+    - name: Setup MSVC environment
+      uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Configure and Build
-      run: |
-        cmake -S . -B build
-        cmake --build build --config Release
+    - name: Install NuGet
+      uses: nuget/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget install Microsoft.WindowsAppSDK -Version 1.7.250606001 -OutputDirectory packages
+
+    - name: Configure CMake
+      run: cmake -S . -B build -DCMAKE_PREFIX_PATH="packages\\Microsoft.WindowsAppSDK.1.7.250606001\\build\\native"
+
+    - name: Build project
+      run: cmake --build build --config Release
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: OcrBridgeWinRT-exe
+        path: build/Release/OcrBridgeWinRT.exe

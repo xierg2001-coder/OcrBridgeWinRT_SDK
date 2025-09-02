@@ -1,4 +1,4 @@
-name: Build OCR Bridge
+name: CI/CD Build
 
 on:
   push:
@@ -11,36 +11,27 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-    - name: Setup MSVC environment
-      uses: ilammy/msvc-dev-cmd@v1
-      
+    # Add MSBuild to the PATH
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
 
-    
-    - name: Download Windows App SDK NuGet package
+    - name: Setup VSTools
+      uses: microsoft/setup-vs-tools@v1.1
+
+    # Optional: If you need a specific Visual Studio version
+    - name: Get Visual Studio
+      uses: microsoft/setup-msbuild@v1.1
+
+    # Build the project using MSBuild
+    - name: Build Project
       run: |
-        mkdir packages
-        nuget install Microsoft.WindowsAppSDK -Version 1.7.250606001 -OutputDirectory packages
+        msbuild your_project_name.sln /p:Configuration=Release /p:Platform=x64
 
-    - name: Extract SDK
-      run: |
-        mkdir sdk
-        tar -xf packages/Microsoft.WindowsAppSDK.1.7.250606001/Microsoft.WindowsAppSDK.1.7.250606001.nupkg -C sdk
-
-
-    - name: Locate Windows SDK
-      run: |
-       vswhere -latest -products * -requires Microsoft.VisualStudio.Component.Windows10SDK* -property installationPath
-    - name: Configure CMake
-      run: cmake -S . -B build -DCMAKE_PREFIX_PATH="${{ github.workspace }}\\sdk"
-
-    - name: Build project
-      run: cmake --build build --config Release
-
-    - name: Upload executable
-      uses: actions/upload-artifact@v4
+    # Optional: Upload the build artifacts
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
       with:
-        name: OcrBridgeWinRT-exe
-        path: build/Release/OcrBridgeWinRT.exe
+        name: my-app
+        path: path/to/your/build/output

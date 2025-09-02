@@ -2,7 +2,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Microsoft.Windows.AI.h>
+#include <winrt/Microsoft.Windows.AI.Imaging.h>
 #include <winrt/Windows.Data.Json.h>
 #include <iostream>
 #include <fstream>
